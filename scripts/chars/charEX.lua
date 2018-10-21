@@ -16,11 +16,11 @@ local info = {}
 info[name] = "Jane Doe"
 
 -- Initalizes a table of the character art
-local char_art = {}
-char_art[happy] = love.graphics.newImage('art/char/ex/happy.png') 
+local art = {}
+art[happy] = love.graphics.newImage('art/char/ex/happy.png') 
 	-- TODO: set this up to load piece by piece with a loading screen to not grind the program to a halt
 		-- This will probably require passing a folder to initalize to a function (e.g. load_images()) in the main folder,
 		-- so it can interface with the game-managing love.update(dt) function.
 
-local M = { info = info, char_art = char_art }
+local M = { info = info, art = art }
 return M
