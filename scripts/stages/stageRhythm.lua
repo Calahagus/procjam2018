@@ -1,3 +1,7 @@
+local bkg = require("scripts/renderers/renderBkg")
+local chars = require("scripts/renderers/renderChar")
+local text = require("scripts/renderers/renderText")
+
 local allows_pause = true
 
 local gui

@@ -1,3 +1,7 @@
+local bkg = require("scripts/renderers/renderBkg")
+local chars = require("scripts/renderers/renderChar")
+local text = require("scripts/renderers/renderText")
+
 local allows_pause = true
 
 local gui
@@ -15,15 +19,17 @@ local function load() -- Call this function when you want to switch to this stag
 end
 
 local function update(dt) 
-	print("Junk")
+	bkg.update(dt)
+	chars.update(dt)
+	text.update(dt)
 end
 
 local function draw() 
-	print("Junk")
-	-- Draw backgrounds, possibly in transition from a previous state
-	-- Draw characters, possibly in transition from a previous state
-	-- Render some text with renderText, which is locally required
+	bkg.draw()
+	chars.draw()
+	text.draw()
 	-- Draw text advancement GUI
+	-- Draw fading out or fading in, if transitioning in or out of a scene
 end
 
 local function unload()
