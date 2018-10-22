@@ -52,8 +52,8 @@ function love.keypressed(key)
 end
 
 function load_stage(target_stage)
-	-- TODO: add a fading-out function before doing the sharp cut to any of this stuff
-	-- TODO: add a pre-loader stage with a spinning little wheel or something. put init calls into a sub-function
+	-- TODO: add a fading-out function
+	-- TODO: add a pre-loader (hard!)
 	target_stage.load()
 	stage = target_stage
 	pause_clear()

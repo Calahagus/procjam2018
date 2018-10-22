@@ -1,0 +1,3 @@
+Key Context	ENG Line
+// A comment on a line, to be ignored
+ExKey	Any sort of contextual information goes here	This is an example line.
