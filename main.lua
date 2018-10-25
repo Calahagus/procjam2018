@@ -3,6 +3,7 @@ pause_target = false
 pause_state = false
 
 pause_fadescale = 200
+pause_outratio = 2.5
 pause_fademax = 100
 pause_fademin = 0
 
@@ -12,7 +13,7 @@ stage_rhythm = require("scripts/stages/stageRhythm")
 stage = nil
 
 function love.load()
-	load_stage(stage_menu)
+	load_stage(stage_rhythm)
 end
 
 function love.update(dt)
@@ -23,7 +24,7 @@ function love.update(dt)
 	if (pause_target and pause_fade < pause_fademax) then
 		pause_fade = pause_fade + pause_fadescale * dt
 	elseif not pause_target and pause_fade > pause_fademin then
-		pause_fade = pause_fade - pause_fadescale * dt
+		pause_fade = pause_fade - pause_fadescale * dt * pause_outratio
 	end
 	pause_fade = math.min(pause_fade, pause_fademax)
 	pause_fade = math.max(pause_fade, pause_fademin)
@@ -41,14 +42,21 @@ function love.draw()
 		love.graphics.print("PAUSED",100,24)
 		-- TODO: make this better 
 	end
-	love.graphics.print(tostring(pause_target),0,0)
-	love.graphics.print(tostring(pause_fade),0,72)
+	--love.graphics.print(tostring(pause_target),0,0)
+	--love.graphics.print(tostring(pause_fade),0,72)
 end
 
 function love.keypressed(key)
 	if key == 'escape' and stage.allows_pause then
 		pause_target = not pause_target
 	end
+	-- if not fading out
+	stage.keypressed(key)
+end
+
+function love.keyreleased(key)
+	-- if not fading out
+	stage.keyreleased(key)
 end
 
 function load_stage(target_stage)
