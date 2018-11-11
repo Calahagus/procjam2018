@@ -20,7 +20,7 @@ function love.draw()
 
 	if paused then
 		love.graphics.print("PAUSED",100,24)
-		-- TODO: make this better 
+		-- TODO: make this better
 	end
 	--love.graphics.print(tostring(paused),0,72)
 end
