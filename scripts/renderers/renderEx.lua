@@ -6,10 +6,6 @@ local function load()
 	print("Junk")
 end
 
-local function unload() 
-	print("Junk")
-end
-
 local function update() 
 	print("Junk")
 end
@@ -25,5 +21,5 @@ local function hurry()
 	print("Junk")
 end
 
-local M = { busy = busy, load = load, unload = unload, update = update, draw = draw }
+local M = { busy = busy, load = load, update = update, draw = draw }
 return M

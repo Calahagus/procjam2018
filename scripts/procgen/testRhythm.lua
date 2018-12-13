@@ -1,22 +1,21 @@
--- Sorry Aidan I need easy calculations <3
--- local music = love.audio.newSource("sound/sapporo/umbrella.mp3","stream")
--- local bpm = 85
 
-local music = love.audio.newSource("sound/debug/debug-major.wav","stream")
-local bpm = 120
+local dbg_enemy = require("scripts/chars/charDBG")
+
+local music = love.audio.newSource("sound/music/inextricably-linked-edit.wav","stream")
+local bpm = 80
 
 local timesig = 4 -- how many beats in a bar. whether it's 4th or 8th or 5th notes doesn't matter, this is a calc against bpm
-
 local offset = 0.0 -- time in seconds before the first beat should kick in
 
 local pattern = {
+	-- MAYBE TODO: give these patterns real key to refer to them? at least for demo purposes
 	{	-- pattern[1], 		=	. , . , . , 1 , * , .
 		key = "space", -- the key to press for this pattern's hit
 		dir = "pressed",
 		wait = 1.0, -- 1 beat of wait between prime and hit
-		wait_buffer_early = 0.2, -- 1/10 of a beat of early buffer time
-		wait_buffer_late = 0.3, -- 2/10 of a beat of late buffer time
-		sound = {	-- Outside of debug, all the SFX AND Art are handled by stageRhythm and the character fighter files, not the ProcGen. Only here for debug reasons.
+		wait_buffer_early = 0.05, -- fraction of a beat of early buffer time
+		wait_buffer_late = 0.05, -- fraction of a beat of late buffer time
+		sound = {	-- Outside of debug, all the SFX AND Art are handled by stageRhythm and the character fighter files, not the ProcGen. Only here for debugging.
 			prime = love.audio.newSource("sound/sfx/bouncy-ready-01.wav","static"),
 			hold = nil,
 			attack = nil,
@@ -24,11 +23,20 @@ local pattern = {
 			miss = love.audio.newSource("sound/sfx/miss-01.wav","static"),
 		},
 		anim = {
-			prime = nil,
-			hold = nil,
-			attack = nil,
-			hit = nil,
-			miss = nil,
+			player = {
+				prime = nil,
+				hold = nil,
+				attack = nil,
+				hit = nil,
+				miss = nil,
+			},
+			enemy = {
+				prime = dbg_enemy.anim.cut_prime,
+				hold = dbg_enemy.anim.cut_hold,
+				attack = nil,
+				hit = dbg_enemy.anim.cut_hit,
+				miss = dbg_enemy.anim.cut_miss,
+			},
 		},
 	}, 	
 	{	-- pattern[2], 		=	1 , . , . , . , * , .
@@ -45,11 +53,20 @@ local pattern = {
 			miss = love.audio.newSource("sound/sfx/miss-01.wav","static"),
 		},
 		anim = {
-			prime = nil,
-			hold = nil,
-			attack = nil,
-			hit = nil,
-			miss = nil,
+			player = {
+				prime = nil,
+				hold = nil,
+				attack = nil,
+				hit = nil,
+				miss = nil,
+			},
+			enemy = {
+				prime = dbg_enemy.anim.cut_prime,
+				hold = dbg_enemy.anim.cut_hold,
+				attack = nil,
+				hit = dbg_enemy.anim.cut_hit,
+				miss = dbg_enemy.anim.cut_miss,
+			},
 		},
 	},
 	{	-- pattern[3], 		=	. , 3 , 2 , 1 , * , * , * , .
@@ -69,25 +86,82 @@ local pattern = {
 			miss = love.audio.newSource("sound/sfx/miss-01.wav","static"),
 		},
 		anim = {
-			prime = nil,
-			hold = nil,
-			attack = nil,
-			hit = nil,
-			miss = nil,
+			player = {
+				prime = nil,
+				hold = nil,
+				attack = nil,
+				hit = nil,
+				miss = nil,
+			},
+			enemy = {
+				prime = dbg_enemy.anim.cut_prime,
+				hold = dbg_enemy.anim.cut_hold,
+				attack = nil,
+				hit = dbg_enemy.anim.cut_hit,
+				miss = dbg_enemy.anim.cut_miss,
+			},
 		},
 	}
 }
 
 local beats = {
-	{}, 							-- 1
-	{}, 							-- and
-	{}, 							-- 2
-	{}, 							-- and
-	{}, 							-- 3
-	{}, 							-- and
-	{ primes = { 1 } }, 			-- 4		Prime for pattern 1
-	{}, 							-- and, equals one full bar (don't have hits in the first bar)
-	{}, -- bar 2 starts
+	{}, -- 0:00. 4-bar fade-in loop begins
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- 0:12. 4-bar drums intro
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar, ends with drums tease		-- 1
+	{}, 									-- and
+	{}, 									-- 2
+	{}, 									-- and
+	{}, 									-- 3
+	{}, 									-- and
+	{ primes = { 1 } }, 					-- 4		Prime for pattern 1
+	{}, 									-- and, equals one full bar (don't have hits in the first bar)
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar, ending with full drums transition into main section
 	{},
 	{},
 	{},
@@ -95,7 +169,15 @@ local beats = {
 	{},
 	{ primes = { 1 } },
 	{},
-	{}, -- bar 3 starts
+	{}, -- 0:24. 4-bar section introducting bleeps & bloops.
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
 	{},
 	{},
 	{},
@@ -103,7 +185,7 @@ local beats = {
 	{},
 	{ primes = { 1 } },
 	{},
-	{}, -- bar 4 starts
+	{}, -- bar
 	{},
 	{},
 	{},
@@ -111,19 +193,400 @@ local beats = {
 	{},
 	{},
 	{},
-	{}, -- bar 5 starts
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- 0:36. 4-bar, bleep & bloop loop continues
 	{},
 	{},
 	{},
 	{},
 	{},
 	{},
-	{}
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- 0:48. 4-bar, bleep & bloop loop continues continuing
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- 1:00. 4-bar section intro to the slow string section
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- 1:12. 4-bar, strings continue
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- 1:24. 4-bar, strings cut out and droning takes over
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- 1:36. 4-bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar, drums tease a transition but nothing happens
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- 1:48. 4-bar, bleeps & bloops start up again.
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- 2:00. 4-bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- 2:12. 4-bar, strings ACTUALLY start again
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- 2:24. 4-bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- 2:36. 4-bar outro of the bass drone. considering adding one extra trick here?
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{ primes = { 1 } },
+	{ primes = { 1 } },
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- 2:48. 4-bar outro fading to silence
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}, -- bar
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
 } 
--- see notes oct 24 2018
--- each rhythm index is a beat which has beat[sounds], beat[art], beat[action] 
-	-- (beat[special] can be added later for hard-coded special effects)
--- references patterns in a pattern table contained within patternGen or the pre-set rhythm file or w/e
+
 
 local M = { beats = beats, pattern = pattern, offset = offset, bpm = bpm, timesig = timesig, music = music }
 return M

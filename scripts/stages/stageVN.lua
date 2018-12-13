@@ -32,10 +32,6 @@ end
 
 local function update(dt) 
 	-- update the scene
-
-	bkg.update(dt)
-	chars.update(dt)
-	text.update(dt)
 end
 
 local function draw() 
